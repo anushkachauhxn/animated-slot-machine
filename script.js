@@ -14,7 +14,7 @@ const doors = document.querySelectorAll(".door"),
 trigger.addEventListener("click", spin);
 
 function init(firstInit = true, groups = 1, duration = 1) {
-  const itemsUsed = [];
+  const itemsUsed = []; // stores items shown on the doors
 
   for (const door of doors) {
     if (firstInit) {
@@ -29,15 +29,19 @@ function init(firstInit = true, groups = 1, duration = 1) {
     const pool = ["./assets/questionmark.png"];
 
     if (!firstInit) {
-      let arr = [];
+      let arr = []; // array of items to be spinned
+
       for (let n = 0; n < (groups > 0 ? groups : 1); n++) {
+        // we filter out the items already picked
         arr = items.filter((x) => {
           return !itemsUsed.includes(x);
         });
       }
+
       pool.push(...shuffle(arr));
       itemsUsed.push(pool[pool.length - 1]);
 
+      /* -- Spinning Transition Code -- */
       boxesClone.addEventListener(
         "transitionstart",
         function () {
@@ -61,6 +65,7 @@ function init(firstInit = true, groups = 1, duration = 1) {
       );
     }
 
+    /* Populating boxesClone with divs containing item images */
     for (let i = pool.length - 1; i >= 0; i--) {
       const box = document.createElement("div");
       box.classList.add("box");
@@ -70,6 +75,7 @@ function init(firstInit = true, groups = 1, duration = 1) {
       boxesClone.appendChild(box);
     }
 
+    /* boxesClone CSS for transition: last box is displayed */
     boxesClone.style.transitionDuration = `${duration > 0 ? duration : 1}s`;
     boxesClone.style.transform = `translateY(-${
       door.clientHeight * (pool.length - 1)
@@ -103,6 +109,7 @@ function shuffle([...arr]) {
   return arr;
 }
 
+/* Animation Function: https://developer.mozilla.org/en-US/docs/Web/API/Element/animate */
 function animateTrigger() {
   const arm = document.querySelector(".slot-trigger .arm"),
     knob = document.querySelector(".slot-trigger .knob"),
